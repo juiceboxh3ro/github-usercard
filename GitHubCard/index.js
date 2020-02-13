@@ -46,6 +46,78 @@ const followersArray = [];
 
 */
 
+function myFollowers(obj) {
+  // create elements
+  const card = document.createElement('div'),
+  avatar = document.createElement('img'),
+  cardInfo = document.createElement('div'),
+  
+  name = document.createElement('h3'),
+  userName = document.createElement('p'),
+  userLoc = document.createElement('p'),
+  userProf = document.createElement('p'),
+  userProfLink = document.createElement('a'),
+  
+  followers = document.createElement('p'),
+  following = document.createElement('p'),
+  bio = document.createElement('p');
+
+  // create structure
+  card.append(avatar);
+  card.append(cardInfo);
+  cardInfo.append(name);
+  cardInfo.append(userName);
+  cardInfo.append(userLoc);
+  cardInfo.append(userProf);
+  userProf.appendChild(userProfLink);
+  cardInfo.append(followers);
+  cardInfo.append(following);
+  cardInfo.append(bio);
+
+  // add classes
+  card.classList.add('card');
+  cardInfo.classList.add('card-info');
+  name.classList.add('name');
+  userName.classList.add('username');
+
+  // apply text and attributes
+  avatar.src = obj.avatar_url;
+  name.textContent = obj.name;
+  userName.textContent = obj.login;
+  userLoc.textContent = `Location: ${obj.location}`;
+  userProfLink.textContent = `Profile ${obj.html_url}`;
+  userProfLink.href = obj.html_url;
+  followers.textContent = `Followers: ${obj.followers}`;
+  following.textContent = `Followers: ${obj.following}`;
+
+  return card;
+}
+
+const cardDeck = document.querySelector('.cards');
+
+axios.get('https://api.github.com/users/juiceboxh3ro')
+.then(response => {
+  console.log(response);
+  
+  const myData = response.data;
+
+  cardDeck.append(myFollowers(myData));
+})
+.catch(error => {
+  console.log(error);
+})
+
+axios.get('https://api.github.com/users/juiceboxh3ro/followers')
+.then(response => {
+  console.log(response);
+  response.data.map(item => {
+    cardDeck.append(myFollowers(item));
+  })
+})
+.catch(error => {
+  console.log(error);
+})
+
 /* List of LS Instructors Github username's: 
   tetondan
   dustinmyers
