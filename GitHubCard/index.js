@@ -24,7 +24,7 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ['dakoriah', 'Cybersck', 'landoDev', 'ajablanco', 'kkslider2130', 'MrR3set'];
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -48,19 +48,19 @@ const followersArray = [];
 
 function myFollowers(obj) {
   // create elements
-  const card = document.createElement('div'),
-  avatar = document.createElement('img'),
-  cardInfo = document.createElement('div'),
+  const card = document.createElement('div'), //div card
+  avatar = document.createElement('img'), // img
+  cardInfo = document.createElement('div'), // div card-info
   
-  name = document.createElement('h3'),
-  userName = document.createElement('p'),
-  userLoc = document.createElement('p'),
-  userProf = document.createElement('p'),
-  userProfLink = document.createElement('a'),
+  name = document.createElement('h3'), // user's name h3
+  userName = document.createElement('p'), // user's username p
+  userLoc = document.createElement('p'), // user's location p
+  userProf = document.createElement('p'), // user's profile p container
+  userProfLink = document.createElement('a'), // user's profile p anchor
   
-  followers = document.createElement('p'),
-  following = document.createElement('p'),
-  bio = document.createElement('p');
+  followers = document.createElement('p'), // user's followers p
+  following = document.createElement('p'), // user's following p
+  bio = document.createElement('p'); // user's bio p
 
   // create structure
   card.append(avatar);
@@ -69,7 +69,7 @@ function myFollowers(obj) {
   cardInfo.append(userName);
   cardInfo.append(userLoc);
   cardInfo.append(userProf);
-  userProf.appendChild(userProfLink);
+  userProf.append(userProfLink); // append a to profile p
   cardInfo.append(followers);
   cardInfo.append(following);
   cardInfo.append(bio);
@@ -82,13 +82,31 @@ function myFollowers(obj) {
 
   // apply text and attributes
   avatar.src = obj.avatar_url;
-  name.textContent = obj.name;
+
+  if(obj.name) {
+    name.textContent = obj.name;
+  } else {
+    name.textContent = 'Johnny No-Name';
+  }
+
   userName.textContent = obj.login;
-  userLoc.textContent = `Location: ${obj.location}`;
-  userProfLink.textContent = `Profile ${obj.html_url}`;
-  userProfLink.href = obj.html_url;
+
+  if(obj.location) {
+    userLoc.textContent = `Location: ${obj.location}`;
+  } else {
+    userLoc.textContent = `Location: Secret`;
+  }
+
+  // userProf.textContent = `Profile: `;
+  // userProfLink.href = obj.html_url;
+  // userProfLink.textContent = obj.html_url;
+
+  userProf.innerHTML = `Profile: <a href="${obj.html_url}">${obj.html_url}</a>`;
+
   followers.textContent = `Followers: ${obj.followers}`;
   following.textContent = `Followers: ${obj.following}`;
+
+  bio.textContent = `Bio: ${obj.bio}`;
 
   return card;
 }
@@ -110,9 +128,17 @@ axios.get('https://api.github.com/users/juiceboxh3ro')
 axios.get('https://api.github.com/users/juiceboxh3ro/followers')
 .then(response => {
   console.log(response);
+
   response.data.map(item => {
-    cardDeck.append(myFollowers(item));
+    axios.get(`https://api.github.com/users/${item.login}`)
+    .then(res2 => {
+      console.log(res2);
+      cardDeck.append(myFollowers(res2.data));
+    })
+    .catch(error => {
+      console.log(error);
   })
+})
 })
 .catch(error => {
   console.log(error);
